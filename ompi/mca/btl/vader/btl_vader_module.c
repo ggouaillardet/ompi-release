@@ -14,6 +14,8 @@
  * Copyright (c) 2009      Cisco Systems, Inc.  All rights reserved.
  * Copyright (c) 2010-2014 Los Alamos National Security, LLC. All rights
  *                         reserved.
+ * Copyright (c) 2014      Research Organization for Information Science
+ *                         and Technology (RIST). All rights reserved.
  * $COPYRIGHT$
  *
  * Additional copyrights may follow
@@ -193,7 +195,7 @@ static int init_vader_endpoint (struct mca_btl_base_endpoint_t *ep, struct ompi_
 
         ep->segment_base = opal_shmem_segment_attach (&ep->seg_ds);
         if (NULL == ep->segment_base) {
-            return rc;
+            return OMPI_ERROR;
         }
 #endif
 
@@ -321,7 +323,10 @@ static int vader_add_procs (struct mca_btl_base_module_t* btl,
 
         /* setup endpoint */
         peers[proc] = component->endpoints + local_rank;
-        init_vader_endpoint (peers[proc], procs[proc], local_rank++);
+        rc = init_vader_endpoint (peers[proc], procs[proc], local_rank++);
+        if(OMPI_SUCCESS != rc) {
+            return rc;
+        }
     }
 
     return OMPI_SUCCESS;
