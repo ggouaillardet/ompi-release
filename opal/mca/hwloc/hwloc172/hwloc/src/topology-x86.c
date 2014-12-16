@@ -33,7 +33,7 @@ struct cacheinfo {
   unsigned linepart;
   int ways;
   unsigned sets;
-  unsigned size;
+  unsigned long size;
 };
 
 struct procinfo {
@@ -65,7 +65,7 @@ static void fill_amd_cache(struct procinfo *infos, unsigned level, unsigned cpui
 {
   struct cacheinfo *cache;
   unsigned cachenum;
-  unsigned size = 0;
+  unsigned long size = 0;
 
   if (level == 1)
     size = ((cpuid >> 24)) << 10;
@@ -101,7 +101,7 @@ static void fill_amd_cache(struct procinfo *infos, unsigned level, unsigned cpui
   cache->size = size;
   cache->sets = 0;
 
-  hwloc_debug("cache L%u t%u linesize %u ways %u size %uKB\n", cache->level, cache->nbthreads_sharing, cache->linesize, cache->ways, cache->size >> 10);
+  hwloc_debug("cache L%u t%u linesize %u ways %u size %luKB\n", cache->level, cache->nbthreads_sharing, cache->linesize, cache->ways, cache->size >> 10);
 }
 
 /* Fetch information from the processor itself thanks to cpuid and store it in
@@ -194,7 +194,7 @@ static void look_proc(struct procinfo *infos, unsigned highest_cpuid, unsigned h
     cache = infos->cache = malloc(infos->numcaches * sizeof(*infos->cache));
 
     for (cachenum = 0; ; cachenum++) {
-      unsigned linesize, linepart, ways, sets;
+      unsigned long linesize, linepart, ways, sets;
       unsigned type;
       eax = 0x8000001d;
       ecx = cachenum;
@@ -222,7 +222,7 @@ static void look_proc(struct procinfo *infos, unsigned highest_cpuid, unsigned h
       cache->sets = sets = ecx + 1;
       cache->size = linesize * linepart * ways * sets;
 
-      hwloc_debug("cache %u type %u L%u t%u c%u linesize %u linepart %u ways %u sets %u, size %uKB\n", cachenum, cache->type, cache->level, cache->nbthreads_sharing, infos->max_nbcores, linesize, linepart, ways, sets, cache->size >> 10);
+      hwloc_debug("cache %u type %u L%u t%u c%u linesize %lu linepart %lu ways %lu sets %lu, size %uKB\n", cachenum, cache->type, cache->level, cache->nbthreads_sharing, infos->max_nbcores, linesize, linepart, ways, sets, cache->size >> 10);
 
       cache++;
     }
@@ -263,7 +263,7 @@ static void look_proc(struct procinfo *infos, unsigned highest_cpuid, unsigned h
     cache = infos->cache = malloc(infos->numcaches * sizeof(*infos->cache));
 
     for (cachenum = 0; ; cachenum++) {
-      unsigned linesize, linepart, ways, sets;
+      unsigned long linesize, linepart, ways, sets;
       unsigned type;
       eax = 0x04;
       ecx = cachenum;
@@ -290,7 +290,7 @@ static void look_proc(struct procinfo *infos, unsigned highest_cpuid, unsigned h
       cache->sets = sets = ecx + 1;
       cache->size = linesize * linepart * ways * sets;
 
-      hwloc_debug("cache %u type %u L%u t%u c%u linesize %u linepart %u ways %u sets %u, size %uKB\n", cachenum, cache->type, cache->level, cache->nbthreads_sharing, infos->max_nbcores, linesize, linepart, ways, sets, cache->size >> 10);
+      hwloc_debug("cache %u type %u L%u t%u c%u linesize %lu linepart %lu ways %lu sets %lu, size %uKB\n", cachenum, cache->type, cache->level, cache->nbthreads_sharing, infos->max_nbcores, linesize, linepart, ways, sets, cache->size >> 10);
       infos->max_nbthreads = infos->max_log_proc / infos->max_nbcores;
       hwloc_debug("thus %u threads\n", infos->max_nbthreads);
       infos->threadid = infos->logprocid % infos->max_nbthreads;
@@ -357,6 +357,7 @@ static void summarize(hwloc_topology_t topology, struct procinfo *infos, unsigne
   unsigned i, j, l, level, type;
   unsigned nbsockets = 0;
   int one = -1;
+  unsigned next_group_depth = topology->next_group_depth;
 
   for (i = 0; i < nbprocs; i++)
     if (infos[i].present) {
@@ -487,6 +488,8 @@ static void summarize(hwloc_topology_t topology, struct procinfo *infos, unsigne
       }
       node = hwloc_alloc_setup_object(HWLOC_OBJ_NODE, nodeid);
       node->cpuset = node_cpuset;
+      node->nodeset = hwloc_bitmap_alloc();
+      hwloc_bitmap_set(node->nodeset, nodeid);
       hwloc_debug_1arg_bitmap("os node %u has cpuset %s\n",
           nodeid, node_cpuset);
       hwloc_insert_object_by_cpuset(topology, node);
@@ -548,9 +551,12 @@ static void summarize(hwloc_topology_t topology, struct procinfo *infos, unsigne
 	      hwloc_bitmap_clr(unknowns_cpuset, j);
 	    }
 	  }
-	  unknown_obj = hwloc_alloc_setup_object(HWLOC_OBJ_MISC, unknownid);
+	  unknown_obj = hwloc_alloc_setup_object(HWLOC_OBJ_GROUP, unknownid);
 	  unknown_obj->cpuset = unknown_cpuset;
 	  unknown_obj->os_level = level;
+	  unknown_obj->attr->group.depth = topology->next_group_depth + level;
+	  if (next_group_depth <= topology->next_group_depth + level)
+	    next_group_depth = topology->next_group_depth + level + 1;
 	  hwloc_debug_2args_bitmap("os unknown%d %u has cpuset %s\n",
 	      level, unknownid, unknown_cpuset);
 	  hwloc_insert_object_by_cpuset(topology, unknown_obj);
@@ -682,6 +688,7 @@ static void summarize(hwloc_topology_t topology, struct procinfo *infos, unsigne
   }
 
   hwloc_bitmap_free(complete_cpuset);
+  topology->next_group_depth = next_group_depth;
 }
 
 #if defined HWLOC_FREEBSD_SYS && defined HAVE_CPUSET_SETID

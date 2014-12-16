@@ -39,6 +39,9 @@
 /* Define to 1 if you have the `cpuset_setid' function. */
 #undef HAVE_CPUSET_SETID
 
+/* Define to 1 if you have the <ctype.h> header file. */
+#undef HAVE_CTYPE_H
+
 /* Define to 1 if we have -lcuda */
 #undef HAVE_CUDA
 
@@ -528,8 +531,8 @@
 /* Define to 1 if you have the `windows.h' header. */
 #undef HWLOC_HAVE_WINDOWS_H
 
-/* Define to 1 if X11 libraries are available. */
-#undef HWLOC_HAVE_X11
+/* Define to 1 if X11 headers including Xutil.h and keysym.h are available. */
+#undef HWLOC_HAVE_X11_KEYSYM
 
 /* Define to 1 if the _syscall3 macro works */
 #undef HWLOC_HAVE__SYSCALL3
@@ -543,20 +546,11 @@
 /* Define to 1 on Linux */
 #undef HWLOC_LINUX_SYS
 
-/* Major version of hwloc */
-#undef HWLOC_MAJOR_VERSION
-
-/* Minor version of hwloc */
-#undef HWLOC_MINOR_VERSION
-
 /* Define to 1 on *NETBSD */
 #undef HWLOC_NETBSD_SYS
 
 /* Define to 1 on OSF */
 #undef HWLOC_OSF_SYS
-
-/* Release version of hwloc */
-#undef HWLOC_RELEASE_VERSION
 
 /* The size of `unsigned int', as computed by sizeof */
 #undef HWLOC_SIZEOF_UNSIGNED_INT

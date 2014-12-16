@@ -14,6 +14,16 @@
 #include <hwloc/autogen/config.h>
 #include <private/autogen/config.h>
 
+#ifdef HWLOC_HAVE_DECL_STRNCASECMP
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
+#endif
+#else
+#ifdef HAVE_CTYPE_H
+#include <ctype.h>
+#endif
+#endif
+
 /* Compile-time assertion */
 #define HWLOC_BUILD_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
 

@@ -87,8 +87,8 @@ It just happens to be hosted as part of the overall Open MPI project.
 Nightly development snapshots are available on the web site. Additionally, the
 code can be directly checked out of Subversion:
 
-shell$ svn checkout http://svn.open-mpi.org/svn/hwloc/trunk hwloc-trunk
-shell$ cd hwloc-trunk
+shell$ git clone https://github.com/open-mpi/hwloc.git
+shell$ cd hwloc
 shell$ ./autogen.sh
 
 Note that GNU Autoconf >=2.63, Automake >=1.10 and Libtool >=2.2.6 are required
@@ -126,8 +126,6 @@ The hwloc core may also benefit from the following development packages:
  exported by the same hwloc release). See Importing and exporting topologies
  from/to XML files for details. The relevant development package is usually
  libxml2-devel or libxml2-dev.
-  * libtool's ltdl library for dynamic plugin loading. The relevant development
- package is usually libtool-ltdl-devel or libltdl-dev.
 
 PCI and XML support may be statically built inside the main hwloc library, or
 as separate dynamically-loaded plugins (see the Components and plugins
@@ -662,7 +660,7 @@ Questions and Bugs
 
 Questions should be sent to the devel mailing list (http://www.open-mpi.org/
 community/lists/hwloc.php). Bug reports should be reported in the tracker (
-https://svn.open-mpi.org/trac/hwloc/).
+https://git.open-mpi.org/trac/hwloc/).
 
 If hwloc discovers an incorrect topology for your machine, the very first thing
 you should check is to ensure that you have the most recent updates installed
@@ -703,9 +701,9 @@ The documentation chapters include
   * CPU and Memory Binding Overview
   * I/O Devices
   * Multi-node Topologies
-  * Object Attributes
+  * Object attributes
   * Importing and exporting topologies from/to XML files
-  * Synthetic Topologies
+  * Synthetic topologies
   * Interoperability With Other Software
   * Thread Safety
   * Components and plugins
@@ -716,5 +714,5 @@ Make sure to have had a look at those too!
 
 -------------------------------------------------------------------------------
 
-Generated on Tue Sep 3 2013 10:24:22 for Hardware Locality (hwloc) by   doxygen
-1.8.4
+Generated on Thu Mar 7 2013 08:08:07 for Hardware Locality (hwloc) by   doxygen
+1.8.3.1

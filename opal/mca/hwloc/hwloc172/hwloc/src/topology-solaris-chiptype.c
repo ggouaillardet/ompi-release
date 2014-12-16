@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2009-2010 Oracle and/or its affiliates.  All rights reserved. 
- * Copyright (c) 2013      Université Bordeaux 1.  All rights reserved.
- * Copyright (c) 2014      Research Organization for Information Science
- *                         and Technology (RIST). All rights reserved.
+ * Copyright (c) 2013 Université Bordeaux 1.  All rights reserved.
  *
  * $COPYRIGHT$
  * 
@@ -12,7 +10,6 @@
  */
 
 #include <private/autogen/config.h>
-#include <hwloc/autogen/config.h>
 #include <hwloc.h>
 #include <private/solaris-chiptype.h>
 #include <stdlib.h>

@@ -1,6 +1,6 @@
 dnl -*- Autoconf -*-
 dnl
-dnl Copyright © 2009-2013 Inria.  All rights reserved.
+dnl Copyright © 2009-2014 Inria.  All rights reserved.
 dnl Copyright (c) 2009-2012 Université Bordeaux 1
 dnl Copyright (c) 2004-2005 The Trustees of Indiana University and Indiana
 dnl                         University Research and Technology
@@ -348,6 +348,7 @@ EOF])
     AC_CHECK_HEADERS([unistd.h])
     AC_CHECK_HEADERS([dirent.h])
     AC_CHECK_HEADERS([strings.h])
+    AC_CHECK_HEADERS([ctype.h])
     
     hwloc_strncasecmp=strncmp
     AC_CHECK_FUNCS([strncasecmp], [
@@ -888,15 +889,39 @@ EOF])
     fi
     # don't add LIBS/CFLAGS/REQUIRES yet, depends on plugins
 
+    # X11 support
+    AC_PATH_XTRA
+
+    CPPFLAGS_save=$CPPFLAGS
+    LIBS_save=$LIBS
+
+    CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+    LIBS="$LIBS $X_PRE_LIBS $X_LIBS $X_EXTRA_LIBS"
+    AC_CHECK_HEADERS([X11/Xlib.h],
+        [AC_CHECK_LIB([X11], [XOpenDisplay],
+            [
+             # the GL backend just needs XOpenDisplay
+             hwloc_enable_X11=yes
+             # lstopo needs more
+             AC_CHECK_HEADERS([X11/Xutil.h],
+                [AC_CHECK_HEADERS([X11/keysym.h],
+                    [AC_DEFINE([HWLOC_HAVE_X11_KEYSYM], [1], [Define to 1 if X11 headers including Xutil.h and keysym.h are available.])])
+                     AC_SUBST([HWLOC_X11_LIBS], ["-lX11"])
+                ])
+            ])
+         ])
+    CPPFLAGS=$CPPFLAGS_save
+    LIBS=$LIBS_save
+
     # GL Support 
     hwloc_gl_happy=no
     if test "x$enable_gl" != "xno"; then
-    	hwloc_gl_happy=yes								
+	hwloc_gl_happy=yes
 
-        AC_CHECK_HEADERS([X11/Xlib.h], [
-          AC_CHECK_LIB([X11], [XOpenDisplay], [:], [hwloc_gl_happy=no])
-        ], [hwloc_gl_happy=no])
-       
+	AS_IF([test "$hwloc_enable_X11" != "yes"],
+              [AC_MSG_WARN([X11 not found; GL disabled])
+               hwloc_gl_happy=no])
+
         AC_CHECK_HEADERS([NVCtrl/NVCtrl.h], [
           AC_CHECK_LIB([XNVCtrl], [XNVCTRLQueryTargetAttribute], [:], [hwloc_gl_happy=no], [-lXext])
         ], [hwloc_gl_happy=no])
@@ -945,8 +970,23 @@ EOF])
     AC_MSG_CHECKING([for cpuid])
     old_CPPFLAGS="$CPPFLAGS"
     CPPFLAGS="$CPPFLAGS -I$HWLOC_top_srcdir/include"
+    # We need hwloc_uint64_t but we can't use hwloc/autogen/config.h before configure ends.
+    # So pass #include/#define manually here for now.
+    CPUID_CHECK_HEADERS=
+    CPUID_CHECK_DEFINE=
+    if test "x$hwloc_windows" = xyes; then
+      CPUID_CHECK_HEADERS="#include <windows.h>"
+      CPUID_CHECK_DEFINE="#define hwloc_uint64_t DWORDLONG"
+    else
+      CPUID_CHECK_DEFINE="#define hwloc_uint64_t uint64_t"
+      if test "x$ac_cv_header_stdint_h" = xyes; then
+        CPUID_CHECK_HEADERS="#include <stdint.h>"
+      fi
+    fi
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[
         #include <stdio.h>
+        $CPUID_CHECK_HEADERS
+        $CPUID_CHECK_DEFINE
         #define __hwloc_inline
         #include <private/cpuid.h>
       ]], [[
