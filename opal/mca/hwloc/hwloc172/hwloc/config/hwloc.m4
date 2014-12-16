@@ -912,6 +912,7 @@ EOF])
          ])
     CPPFLAGS=$CPPFLAGS_save
     LIBS=$LIBS_save
+    unset LIBS_save # hack...
 
     # GL Support 
     hwloc_gl_happy=no
