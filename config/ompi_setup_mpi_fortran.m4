@@ -348,12 +348,21 @@ AC_DEFUN([OMPI_SETUP_MPI_FORTRAN],[
 
     # We need to have ignore TKR functionality to build the mpi_f08
     # module
-    AS_IF([test $OMPI_WANT_FORTRAN_USEMPIF08_BINDINGS -eq 1 &&
+    AS_IF([test $OMPI_WANT_FORTRAN_USEMPIF08_BINDINGS -eq 1 && \
            test $OMPI_FORTRAN_HAVE_IGNORE_TKR -eq 1],
           [OMPI_BUILD_FORTRAN_USEMPIF08_BINDINGS=1
            OMPI_FORTRAN_F08_PREDECL=$OMPI_FORTRAN_IGNORE_TKR_PREDECL
            OMPI_FORTRAN_F08_TYPE=$OMPI_FORTRAN_IGNORE_TKR_TYPE
           ])
+
+    AS_IF([test $OMPI_WANT_FORTRAN_USEMPIF08_BINDINGS -eq 1 && \
+           test $OMPI_BUILD_FORTRAN_USEMPIF08_BINDINGS -eq 1],
+          [ # If we don't have PMPI, we won't build mpi_f08 at all
+           AC_MSG_CHECKING([whether PMPI is enabled])
+           AS_IF([test $WANT_MPI_PROFILING -eq 1],
+                 [AC_MSG_RESULT([yes])],
+                 [OMPI_BUILD_FORTRAN_USEMPIF08_BINDINGS=0
+                  AC_MSG_RESULT([no])])])
 
     # The overall "_BIND_C" variable will be set to 1 if we have all
     # the necessary forms of BIND(C)
