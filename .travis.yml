@@ -23,16 +23,6 @@ addons:
     # For Linux, make sure we have some extra packages that we like to
     # build with
     apt:
-        packages:
-            - autoconf
-            - automake
-            - libtool
-            - libnl-3-200
-            - libnl-3-dev
-            - libnl-route-3-200
-            - libnl-route-3-dev
-            - libibverbs-dev
-            - librdmacm-dev
         sources:
             - ubuntu-toolchain-r-test
 
@@ -50,6 +40,8 @@ env:
 # not currently using the verbs provider in Libfabric, so we might as
 # well not build it.
 before_install:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo -E apt-get -yq update ; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install autoconf automake libtool libnl-3-200 libnl-3-dev libnl-route-3-200 libnl-route-3-dev libibverbs-dev librdmacm-dev; fi
     - if [[ "GCC_VERSION" == "5" ]]; then COMPILERS="CC=gcc-5 CXX=g++-5 FC=gfortran-5"; fi
     - export CONFIGURE_ARGS="--prefix=$HOME/bogus $COMPILERS" DISTCHECK_CONFIGURE_FLAGS="$CONFIGURE_ARGS"
     - export DISTCHECK_CONFIGURE_FLAGS="$CONFIGURE_ARGS"
