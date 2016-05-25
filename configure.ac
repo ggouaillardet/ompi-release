@@ -819,6 +819,10 @@ AC_DEFINE_UNQUOTED(OPAL_NO_LIB_DESTRUCTOR, [$opal_no_destructor],
     [Whether libraries can be configured with destructor functions])
 AM_CONDITIONAL(OPAL_DESTRUCTOR_USE_FINI, [test x$opal_destructor_use_fini = x1])
 
+ompi_show_title "Thread support"
+
+OPAL_CONFIG_THREADS
+
 ##################################
 # Libraries
 ##################################
@@ -955,7 +959,6 @@ AC_DEFINE_UNQUOTED([OPAL_ALIGN_WORD_SIZE_INTEGERS], [$results],
 #
 # Check out what thread support we have
 #
-OPAL_CONFIG_THREADS
 OMPI_CONFIG_THREADS
 
 CFLAGS="$CFLAGS $THREAD_CFLAGS"
