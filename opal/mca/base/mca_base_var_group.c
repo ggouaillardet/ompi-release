@@ -305,7 +305,8 @@ int mca_base_var_group_deregister (int group_index)
     size = opal_value_array_get_size(&group->group_vars);
     params = OPAL_VALUE_ARRAY_GET_BASE(&group->group_vars, int);
 
-    for (int i = 0 ; i < size ; ++i) {
+    int i;
+    for (i = 0 ; i < size ; ++i) {
         const mca_base_var_t *var;
 
         ret = mca_base_var_get (params[i], &var);
@@ -320,7 +321,7 @@ int mca_base_var_group_deregister (int group_index)
     size = opal_value_array_get_size(&group->group_pvars);
     params = OPAL_VALUE_ARRAY_GET_BASE(&group->group_pvars, int);
 
-    for (int i = 0 ; i < size ; ++i) {
+    for (i = 0 ; i < size ; ++i) {
         const mca_base_pvar_t *var;
 
         ret = mca_base_pvar_get (params[i], &var);
@@ -333,7 +334,7 @@ int mca_base_var_group_deregister (int group_index)
 
     size = opal_value_array_get_size(&group->group_subgroups);
     subgroups = OPAL_VALUE_ARRAY_GET_BASE(&group->group_subgroups, int);
-    for (int i = 0 ; i < size ; ++i) {
+    for (i = 0 ; i < size ; ++i) {
         (void) mca_base_var_group_deregister (subgroups[i]);
     }
     /* ordering of variables and subgroups must be the same if the

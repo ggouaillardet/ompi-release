@@ -168,7 +168,8 @@ int ompi_osc_pt2pt_frag_flush_all (ompi_osc_pt2pt_module_t *module)
                          "osc pt2pt: frag flush all begin"));
 
     /* try to start all the queued frags */
-    for (int i = 0 ; i < ompi_comm_size (module->comm) ; ++i) {
+    int i;
+    for (i = 0 ; i < ompi_comm_size (module->comm) ; ++i) {
         ompi_osc_pt2pt_peer_t *peer = module->peers + i;
 
         while (NULL != (frag = ((ompi_osc_pt2pt_frag_t *) opal_list_remove_first (&peer->queued_frags)))) {
@@ -188,7 +189,7 @@ int ompi_osc_pt2pt_frag_flush_all (ompi_osc_pt2pt_module_t *module)
                          "osc pt2pt: flushing all active fragments"));
 
     /* flush the active frag */
-    for (int i = 0 ; i < ompi_comm_size(module->comm) ; ++i) {
+    for (i = 0 ; i < ompi_comm_size(module->comm) ; ++i) {
         ret = ompi_osc_pt2pt_flush_active_frag (module, i);
         if (OMPI_SUCCESS != ret) {
             return ret;
