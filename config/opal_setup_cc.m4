@@ -14,6 +14,8 @@ dnl Copyright (c) 2007-2009 Sun Microsystems, Inc.  All rights reserved.
 dnl Copyright (c) 2008-2013 Cisco Systems, Inc.  All rights reserved.
 dnl Copyright (c) 2012      Los Alamos National Security, LLC. All rights
 dnl                         reserved.
+dnl Copyright (c) 2016      Research Organization for Information Science
+dnl                         and Technology (RIST). All rights reserved.
 dnl $COPYRIGHT$
 dnl 
 dnl Additional copyrights may follow
@@ -40,13 +42,17 @@ AC_DEFUN([OPAL_SETUP_CC],[
     AC_SUBST([WRAPPER_CC])
 
     # From Open MPI 1.7 on we require a C99 compiant compiler
+    # relax this constraint when configure'd with --disable-c99
     AC_PROG_CC_C99
-    # The result of AC_PROG_CC_C99 is stored in ac_cv_prog_cc_c99
-    if test "x$ac_cv_prog_cc_c99" = xno ; then
-        AC_MSG_WARN([Open MPI requires a C99 compiler])
-        AC_MSG_ERROR([Aborting.])
-    fi
-
+    AS_IF([test "$enable_c99" != no],
+          [# The result of AC_PROG_CC_C99 is stored in ac_cv_prog_cc_c99
+           AS_IF([test "x$ac_cv_prog_cc_c99" = xno],
+                 [AC_MSG_WARN([Open MPI requires a C99 compiler])
+                  AC_MSG_ERROR([Aborting.])])
+           AC_DEFINE_UNQUOTED([OPAL_RESTRICT], [restrict],
+                   [restrict keyword (restrict for C99 compiler)])],
+          [AC_DEFINE_UNQUOTED([OPAL_RESTRICT], [__restrict],
+                   [restrict keyword (__restrict for non C99 compiler)])])
 
     OMPI_C_COMPILER_VENDOR([ompi_c_vendor])
 

@@ -17,6 +17,8 @@ dnl Copyright (c) 2009      Los Alamos National Security, LLC.  All rights
 dnl                         reserved.
 dnl Copyright (c) 2009-2011 Oak Ridge National Labs.  All rights reserved.
 dnl Copyright (c) 2011-2013 NVIDIA Corporation.  All rights reserved.
+dnl Copyright (c) 2015-2016 Research Organization for Information Science
+dnl                         and Technology (RIST). All rights reserved.
 dnl
 dnl $COPYRIGHT$
 dnl 
@@ -485,4 +487,7 @@ fi
 AC_DEFINE_UNQUOTED([OPAL_ENABLE_GETPWUID], [$opal_want_getpwuid],
                    [Disable getpwuid support (default: enabled)])
     
+AC_ARG_ENABLE([c99],
+              AC_HELP_STRING([--disable-c99],
+                             [allow Open MPI to be built with a non C99 compiler]))
 ])dnl
