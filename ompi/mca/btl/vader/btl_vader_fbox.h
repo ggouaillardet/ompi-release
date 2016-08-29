@@ -146,7 +146,7 @@ static inline unsigned char *mca_btl_vader_reserve_fbox (mca_btl_base_endpoint_t
     return dst + sizeof (mca_btl_vader_fbox_hdr_t);
 }
 
-static inline void mca_btl_vader_fbox_send (unsigned char * restrict fbox, unsigned char tag)
+static inline void mca_btl_vader_fbox_send (unsigned char * OPAL_RESTRICT fbox, unsigned char tag)
 {
     /* ensure data writes have completed before we mark the data as available */
     opal_atomic_wmb ();
@@ -156,11 +156,11 @@ static inline void mca_btl_vader_fbox_send (unsigned char * restrict fbox, unsig
 }
 
 static inline bool mca_btl_vader_fbox_sendi (mca_btl_base_endpoint_t *ep, unsigned char tag,
-                                             void * restrict header, const size_t header_size,
-                                             void * restrict payload, const size_t payload_size)
+                                             void * OPAL_RESTRICT header, const size_t header_size,
+                                             void * OPAL_RESTRICT payload, const size_t payload_size)
 {
     const size_t total_size = header_size + payload_size;
-    unsigned char * restrict fbox;
+    unsigned char * OPAL_RESTRICT fbox;
 
     fbox = mca_btl_vader_reserve_fbox(ep, total_size);
     if (OPAL_UNLIKELY(NULL == fbox)) {

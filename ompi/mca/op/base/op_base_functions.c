@@ -604,8 +604,8 @@ LOC_FUNC(minloc, long_double_int, <)
  *    routines, needed for some optimizations.
  */
 #define OP_FUNC_3BUF(name, type_name, type, op) \
-    static void ompi_op_base_3buff_##name##_##type_name(void * restrict in1,   \
-                                                        void * restrict in2, void * restrict out, int *count, \
+    static void ompi_op_base_3buff_##name##_##type_name(void * OPAL_RESTRICT in1,   \
+                                                        void * OPAL_RESTRICT in2, void * OPAL_RESTRICT out, int *count, \
                                                         struct ompi_datatype_t **dtype, \
                                                         struct ompi_op_base_module_1_0_0_t *module) \
     {                                                                   \
@@ -626,8 +626,8 @@ LOC_FUNC(minloc, long_double_int, <)
  * This macro is for (out = op(in1, in2))
  */
 #define FUNC_FUNC_3BUF(name, type_name, type)                           \
-    static void ompi_op_base_3buff_##name##_##type_name(void * restrict in1, \
-                                                        void * restrict in2, void * restrict out, int *count, \
+    static void ompi_op_base_3buff_##name##_##type_name(void * OPAL_RESTRICT in1, \
+                                                        void * OPAL_RESTRICT in2, void * OPAL_RESTRICT out, int *count, \
                                                         struct ompi_datatype_t **dtype, \
                                                         struct ompi_op_base_module_1_0_0_t *module) \
     {                                                                   \
@@ -659,8 +659,8 @@ LOC_FUNC(minloc, long_double_int, <)
 */
 
 #define LOC_FUNC_3BUF(name, type_name, op) \
-  static void ompi_op_base_3buff_##name##_##type_name(void * restrict in1,      \
-                                                      void * restrict in2, void * restrict out, int *count, \
+  static void ompi_op_base_3buff_##name##_##type_name(void * OPAL_RESTRICT in1,      \
+                                                      void * OPAL_RESTRICT in2, void * OPAL_RESTRICT out, int *count, \
                                                       struct ompi_datatype_t **dtype, \
                                                       struct ompi_op_base_module_1_0_0_t *module) \
   {                                                                     \

@@ -597,8 +597,8 @@ static inline void ompi_op_reduce(ompi_op_t * op, void *source,
     return;
 }
 
-static inline void ompi_3buff_op_user (ompi_op_t *op, void * restrict source1, void * restrict source2,
-                                       void * restrict result, int count, struct ompi_datatype_t *dtype)
+static inline void ompi_3buff_op_user (ompi_op_t *op, void * OPAL_RESTRICT source1, void * OPAL_RESTRICT source2,
+                                       void * OPAL_RESTRICT result, int count, struct ompi_datatype_t *dtype)
 {
     ompi_datatype_copy_content_same_ddt (dtype, count, result, source1);
     op->o_func.c_fn (source2, result, &count, &dtype);
@@ -631,9 +631,9 @@ static inline void ompi_3buff_op_reduce(ompi_op_t * op, void *source1,
                                         void *source2, void *target,
                                         int count, ompi_datatype_t * dtype)
 {
-    void *restrict src1;
-    void *restrict src2;
-    void *restrict tgt;
+    void *OPAL_RESTRICT src1;
+    void *OPAL_RESTRICT src2;
+    void *OPAL_RESTRICT tgt;
     src1 = source1;
     src2 = source2;
     tgt = target;

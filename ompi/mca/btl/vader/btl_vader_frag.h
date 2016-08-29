@@ -77,7 +77,7 @@ struct mca_btl_vader_frag_t {
     /** endpoint this fragment is active on */
     struct mca_btl_base_endpoint_t *endpoint;
     /** fast box in use (or NULL) */
-    unsigned char * restrict fbox;
+    unsigned char * OPAL_RESTRICT fbox;
     /** fragment header (in the shared memory region) */
     mca_btl_vader_hdr_t *hdr;
     /** free list this fragment was allocated within */
